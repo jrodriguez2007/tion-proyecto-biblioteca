@@ -1,5 +1,6 @@
 package es.ua.biblioteca.controller;
 
+import es.ua.biblioteca.model.Author;
 import es.ua.biblioteca.model.Book;
 import es.ua.biblioteca.service.IBookService;
 import es.ua.biblioteca.service.IAuthorService;
@@ -26,7 +27,9 @@ public class BookController {
     // Método GET para mostrar el formulario de creación de libro.
     @GetMapping("/create")
     public String showCreateBookForm(Model model) {
-        model.addAttribute("book", new Book());
+        Book newBook = new Book();
+        newBook.setStatus(true);
+        model.addAttribute("book", newBook);
         // Cargar la lista de autores para el combobox.
         model.addAttribute("authors", authorService.findAll());
         return "book/form";  // Ubicación del template: book/form.html
