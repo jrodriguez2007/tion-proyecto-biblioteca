@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title layout:fragment="title">Formulario Autor</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3 th:text="${book.id} == null ? 'Crear Nuevo Libro' : 'Editar Libro'">Crear Nuevo Libro</h3>
+  <!-- Sección de errores -->
+  <div th:if="${errors != null}" class="alert alert-danger">
+    <ul>
+      <li th:each="error : ${errors}" th:text="${error}"></li>
+    </ul>
+  </div>
+
+  <form th:action="${book.id} == null ? @{/book/create} : @{/book/update}" th:object="${book}" method="post">
+    <!-- Campo hidden para el ID -->
+    <input type="hidden" th:field="*{id}" />
+
+    <!-- Campo Título -->
+    <div class="form-group">
+      <label for="title">Título:</label>
+      <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Ingrese el título">
+    </div>
+
+    <!-- Campo Descripción como textarea -->
+    <div class="form-group">
+      <label for="description">Descripción:</label>
+      <textarea th:field="*{description}" class="form-control" id="description" placeholder="Ingrese la descripción" rows="3"></textarea>
+    </div>
+
+    <!-- Campos Nro de páginas, Publicación y Publicación Original en la misma fila -->
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label for="pageNumbers">Número de Páginas:</label>
+        <input type="number" th:field="*{pageNumbers}" class="form-control" id="pageNumbers" placeholder="Ingrese el número de páginas">
+      </div>
+      <div class="form-group col-md-4">
+        <label for="publication">Fecha de Publicación:</label>
+        <input type="date" th:field="*{publication}" class="form-control" id="publication">
+      </div>
+      <div class="form-group col-md-4">
+        <label for="originalPublication">Fecha de Publicación Original:</label>
+        <input type="date" th:field="*{originalPublication}" class="form-control" id="originalPublication">
+      </div>
+    </div>
+
+    <!-- Combobox para seleccionar Autor -->
+    <div class="form-group">
+      <label for="author">Autor:</label>
+      <select th:field="*{author.id}" class="form-control" id="author">
+        <option value="">Seleccione un autor</option>
+        <option th:each="a : ${authors}" th:value="${a.id}" th:text="${a.firstName} + ' ' + ${a.lastName}"></option>
+      </select>
+    </div>
+
+    <!-- Radiobuttons horizontales para Idioma -->
+    <div class="form-group">
+      <label>Idioma:</label>
+      <div class="form-check form-check-inline">
+        <input type="radio" th:field="*{idLanguage}" class="form-check-input" id="espanol" value="1"
+               th:checked="${book.idLanguage == null || book.idLanguage == 1}">
+        <label class="form-check-label" for="espanol">ESPAÑOL</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input type="radio" th:field="*{idLanguage}" class="form-check-input" id="ingles" value="2"
+               th:checked="${book.idLanguage != null && book.idLanguage == 2}">
+        <label class="form-check-label" for="ingles">INGLÉS</label>
+      </div>
+    </div>
+
+    <!-- Campo URI -->
+    <div class="form-group">
+      <label for="URI">URI:</label>
+      <input type="text" th:field="*{URI}" class="form-control" id="URI" placeholder="Ingrese la URI">
+    </div>
+
+    <!-- Campo CDU -->
+    <div class="form-group">
+      <label for="CDU">CDU:</label>
+      <input type="text" th:field="*{CDU}" class="form-control" id="CDU" placeholder="Ingrese el CDU">
+    </div>
+
+    <!-- Estado controlado mediante switch -->
+    <div class="form-group">
+      <label>Estado:</label>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" th:field="*{status}" class="custom-control-input" id="estadoSwitch">
+        <label class="custom-control-label" for="estadoSwitch">Activo</label>
+      </div>
+    </div>
+
+    <!-- Botón de envío y Cancelar -->
+    <button type="submit" class="btn btn-primary"
+            th:text="${book.id} == null ? 'Guardar' : 'Actualizar'">Guardar</button>
+    <a th:href="@{/book/list}" class="btn btn-secondary ml-2">Cancelar</a>
+  </form>
+</div>
+</body>
+</html>

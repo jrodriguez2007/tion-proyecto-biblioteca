@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title layout:fragment="title">Listado de Libros</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h3>Listado de Libros</h3>
+    </div>
+
+    <!-- Sección de errores, en caso de que se envíe un atributo "errors" en el modelo -->
+    <div th:if="${errors != null}" class="alert alert-danger">
+        <ul>
+            <li th:each="error : ${errors}" th:text="${error}"></li>
+        </ul>
+    </div>
+
+    <!-- Formulario de Filtro y Botón Crear -->
+    <form th:action="@{/book/list}" method="get" class="form-inline mb-4">
+        <div class="form-group mr-2">
+            <label for="title" class="mr-2">Título:</label>
+            <input type="text" class="form-control" id="title" name="title" th:value="${title}">
+        </div>
+        <button type="submit" class="btn btn-primary mr-2">
+            <i class="fas fa-search"></i> Filtrar
+        </button>
+        <a th:href="@{/book/create}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Crear
+        </a>
+    </form>
+
+    <!-- Tabla de Libros -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-custom">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Autor</th>
+                <th>Páginas</th>
+                <th>Publicación</th>
+                <th style="width: 100px !important;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}"></td>
+                <td th:text="${book.title}"></td>
+                <td th:text="${book.description}"></td>
+                <td th:text="${book.author.firstName} + ' ' + ${book.author.lastName}"></td>
+                <td th:text="${book.pageNumbers}"></td>
+                <td th:text="${#dates.format(book.publication, 'dd-MM-yyyy')}"></td>
+                <td>
+                    <a th:href="@{/book/edit/{id}(id=${book.id})}" class="btn btn-warning btn-sm mr-1" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a th:href="@{/book/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm" title="Eliminar"
+                       onclick="return confirm('¿Seguro que deseas eliminar este libro?')">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

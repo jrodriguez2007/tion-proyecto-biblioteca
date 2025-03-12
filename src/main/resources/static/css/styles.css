@@ -1,0 +1,33 @@
+body{
+    background-color: #f0f0f0;
+}
+.navbar-custom {
+    background-color: #3F51B5 !important; /* Indigo */
+}
+.dropdown-content, .sidenav {
+    background-color: #3F51B5 !important;
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: #ffffff !important;
+}
+/* Contenedor principal con más márgenes y padding para una vista más espaciosa */
+.container-custom {
+    background-color: #ffffff;
+    padding: 40px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-custom {
+    font-size: 0.85rem; /* Ajusta el valor según lo que necesites */
+}
+
+.table-custom thead {
+    text-align: center;
+}
+.table-custom th-acciones {
+    width: 100px !important;
+}

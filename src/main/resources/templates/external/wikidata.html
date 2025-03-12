@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Resultados Wikidata</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Estilos personalizados para el theme Cyan (en este caso Indigo) -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+</head>
+<body>
+
+  <!-- Cabecera Menu -->
+  <div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-custom">
+      <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Biblioteca Virtual "Dédalo"</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/author/list}">Autores</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/book/list}">Libros</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarReportes" role="button" data-toggle="dropdown"
+                 aria-haspopup="true" aria-expanded="false">
+                Reportes
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarReportes">
+                <a class="dropdown-item" th:href="@{/api/pdfreport}">PDF Report</a>
+              </div>
+            </li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/wikidata/authorsbylanguage}">WikiData</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+
+  <div class="container container-custom">
+
+    <h3>WikiData: Autores y Libros sobre Ciencia Ficción</h3>
+
+    <!-- Formulario para seleccionar idioma y límite -->
+    <form method="get" th:action="@{/wikidata/authorsbylanguage}" class="form-inline mb-3">
+      <div class="form-group mr-2">
+        <label for="language" class="mr-2">Idioma:</label>
+        <select class="form-control" id="language" name="language">
+          <option value="es" th:selected="${selectedLanguage=='es'}">Español</option>
+          <option value="en" th:selected="${selectedLanguage=='en'}">Inglés</option>
+          <option value="fr" th:selected="${selectedLanguage=='fr'}">Francés</option>
+        </select>
+      </div>
+      <div class="form-group mr-2">
+        <label for="limit" class="mr-2">Límite:</label>
+        <input type="number" class="form-control" id="limit" name="limit" th:value="${limit}" min="1" max="100">
+      </div>
+      <button type="submit" class="btn btn-primary mr-2">
+        <i class="fas fa-filter"></i> Filtrar
+      </button>
+    </form>
+
+    <!-- Elemento oculto para almacenar el JSON -->
+    <div id="jsonData" th:utext="${json}" style="display: none;"></div>
+
+    <!-- Contenedor donde se inyectará la tabla -->
+    <div id="wikidataTable" class="table-custom"></div>
+
+    <a th:href="@{/}" class="btn btn-primary mt-3">Volver al Inicio</a>
+
+  </div>
+
+<!-- Script con th:inline para procesar la variable JSON -->
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // Recupera el JSON del modelo
+  var jsonData = /*[[${json}]]*/ '{}';
+
+  try {
+    var parsed = JSON.parse(jsonData);
+    var bindings = parsed.results.bindings;
+    var table = '<div class="table-responsive"><table class="table table-striped table-bordered">';
+    table += '<thead class="thead-dark"><tr><th>Id. Autor</th><th>Autor</th><th>Id. Libro</th><th>Libro</th></tr></thead><tbody>';
+    for (var i = 0; i < bindings.length; i++){
+
+      // Extrae el identificador del autor
+      var autorURI = bindings[i].autor.value;
+      var autorID = autorURI.substring(autorURI.lastIndexOf("/") + 1);
+
+      // Extrae el identificador del libro, si se selecciona
+      var libroURI = bindings[i].libro ? bindings[i].libro.value : "";
+      var libroID = libroURI ? libroURI.substring(libroURI.lastIndexOf("/") + 1) : "";
+
+      var autorLabel = bindings[i].autorLabel.value;
+      var libroLabel = bindings[i].libroLabel.value;
+      table += '<tr><td>' + autorID + '</td><td>' + autorLabel + '</td><td>' + libroID + '</td><td>' + libroLabel + '</td></tr>';
+    }
+    table += '</tbody></table></div>';
+    document.getElementById("wikidataTable").innerHTML = table;
+  } catch (e) {
+    document.getElementById("wikidataTable").innerHTML =
+            '<div class="alert alert-danger">Error al parsear el JSON: ' + e + '</div>';
+  }
+  /*]]>*/
+</script>
+  <!-- Bootstrap JS, Popper.js y jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

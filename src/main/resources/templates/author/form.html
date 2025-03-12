@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title layout:fragment="title">Formulario Autor</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h3 th:text="${author.id} == null ? 'Crear Nuevo Autor' : 'Editar Autor'">Crear Nuevo Autor</h3>
+
+    <form th:action="${author.id} == null ? @{/author/create} : @{/author/update}"
+          th:object="${author}" method="post" enctype="multipart/form-data">
+        <!-- Campo oculto para el ID -->
+        <input type="hidden" th:field="*{id}" />
+
+        <!-- Campo Nombres -->
+        <div class="form-group">
+            <label for="firstName">Nombres:</label>
+            <input type="text" th:field="*{firstName}" class="form-control" id="firstName" placeholder="Ingrese los nombres">
+        </div>
+
+        <!-- Campo Apellidos -->
+        <div class="form-group">
+            <label for="lastName">Apellidos:</label>
+            <input type="text" th:field="*{lastName}" class="form-control" id="lastName" placeholder="Ingrese los apellidos">
+        </div>
+
+        <!-- Campo Fecha de Nacimiento -->
+        <div class="form-group">
+            <label for="dateBirth">Fecha de Nacimiento:</label>
+            <input type="date" th:field="*{dateBirth}" class="form-control" id="dateBirth">
+        </div>
+
+        <!-- Campo Resumen -->
+        <div class="form-group">
+            <label for="summary">Resumen:</label>
+            <input type="text" th:field="*{summary}" class="form-control" id="summary" placeholder="Ingrese el resumen">
+        </div>
+
+        <!-- Campo URL Fotografía (se llenará automáticamente) -->
+        <!-- Opción: mostrar la URL si ya existe -->
+        <div class="form-group">
+            <label for="urlPhotography">URL Fotografía (actual):</label>
+            <input type="text" th:field="*{urlPhotography}" class="form-control" id="urlPhotography" placeholder="URL de la fotografía" readonly>
+        </div>
+
+        <!-- Nuevo campo para cargar la imagen -->
+        <div class="form-group">
+            <label for="photo">Adjuntar Fotografía:</label>
+            <input type="file" class="form-control-file" id="photo" name="photo">
+        </div>
+
+        <!-- Grupo de Radiobuttons para Estado -->
+        <div class="form-group">
+            <label for="estadoSwitch">Estado:</label>
+            <div class="custom-control custom-switch">
+                <input type="checkbox" th:field="*{status}" class="custom-control-input" id="estadoSwitch">
+                <label class="custom-control-label" for="estadoSwitch">Activo</label>
+            </div>
+            <small class="form-text text-muted">Si el switch está activado, el autor se considerará activo.</small>
+        </div>
+
+
+        <!-- Botón de envío y Cancelar -->
+        <button type="submit" class="btn btn-primary" th:text="${author.id} == null ? 'Guardar' : 'Actualizar'">Guardar</button>
+        <a th:href="@{/author/list}" class="btn btn-secondary ml-2">Cancelar</a>
+
+    </form>
+</div>
+</body>
+</html>
